@@ -2,7 +2,9 @@ const express = require('express')
 const fs = require('fs')
 const { request } = require('http')
 const app = express()
-exports.app = app
+
+app.use(express.json())
+app.use(express.urlencoded({extended: true}))
 
 
 app.get('/', (request, response) => {
@@ -11,12 +13,19 @@ app.get('/', (request, response) => {
 
 
 app.get('/todos', (request, response) => {
+    const showPending = request.query.showpending
+
     fs.readFile('./store/todos.json', 'utf-8', (err, data) => {
         if (err) {
             return response.status(500).send('No anda nada amigo')
         }
 
         const todos = JSON.parse(data)
+        if (showPending !== "1"){
+            return response.json({todos: todos})
+        } else {
+            return response.json ({todos: todos.filter(t => {return t.complete === false})})
+        }
         return response.json({todos: todos})
     })
 })
@@ -45,10 +54,33 @@ app.put('/todos/:id/complete', (request, response) => {
         todos[todoIndex].complete = true;
 
         fs.writeFile('./store/todos.json', JSON.stringify(todos), () => {
-            return response.json({ 'status': 'ok' });
-        });
-    });
-});
+            return response.json({ 'status': 'ok' })
+        })
+    })
+})
+
+app.post('/todo', (request, response) => {
+    if (!request.body.name) {
+        return response.status(400).send(' no se encuentra el nombre')
+    }
+
+    fs.readFile('./store/todos.json', 'utf-8', (err, data) => {
+        if (err) {
+            return response.status(500).send('fijate que te algo no anda')
+        }
+        const todos = JSON.parse(data)
+        const maxId = Math.max.apply(Math, todos.map(t => { return t.id }))
+        
+        todos.push({
+            id: maxId +1,
+            complete: false,
+            name: request.body.name
+        })
+        fs.writeFile('./store/todos.json', JSON.stringify(todos), () => {
+            return response.json({ 'status': 'ok' })
+        })       
+    })
+})
 
 app.listen(3000, () =>{
     console.log('Application running on http://localhost:3000')
