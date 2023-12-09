@@ -1,0 +1,76 @@
+#### eliminacion de colecciones
+```db.COLECCION.drop()```
+
+#### visualizar contenido de colecciones
+```db.COLECCION.find().pretty()```
+
+#### Creacion de coleciones
+```javascript
+db.expressjs.insertOne([
+  {
+    "id": 1,
+    "name": "Maria",
+    "complete": true
+  },
+  {
+    "id": 2,
+    "name": "juana",
+    "complete": false
+  },
+  {
+    "id": 3,
+    "name": "conan",
+    "complete": false
+  },
+  {
+    "id": 4,
+    "name": "yamila",
+    "complete": true
+  },
+  {
+    "id": 5,
+    "name": "manuela",
+    "complete": false
+  },
+  {
+    "id": 6,
+    "name": "maximiliano",
+    "complete": false
+  }
+])
+```
+
+#### Gestion de Permisos
+
+
+```json
+
+db.createUser(
+  {
+    user:"usuario",
+    pwd:"usuario",
+    roles:
+      [ 
+        {
+          role:"readWrite",
+          db:"expressjs"
+        }
+      ]
+  }
+);
+```
+
+
+db.createUser(
+  {
+    user:"usuario",
+    pwd:"usuario",
+    roles:
+      [ 
+        {
+          role:"readWrite",
+          db:"js"
+        }
+      ]
+  }
+);

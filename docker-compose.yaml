@@ -1,0 +1,42 @@
+version: "3"
+services:
+  js:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: "node"
+    environment:
+      NODE_ENV: production
+      HOST: "mongo-ha"
+      PORT: 27017
+      USER: "usuario"
+      PASSWORD: "usuario"
+      DATABASE: "js"
+    restart: unless-stopped
+    ports:
+      - 8080:3000
+    # volumes:
+    #   - ./:/app
+    command: pm2-runtime index.js
+  mongo-ha:
+    image: haproxy:latest
+    container_name: "mongo-ha"
+    restart: unless-stopped
+    ports:
+      - 27017:27017
+    volumes:
+      - ./configs/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+  mongo-express:
+    image: mongo-express
+    container_name: mexpress
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongo-ha
+      - ME_CONFIG_MONGODB_PORT=27017
+      - ME_CONFIG_MONGODB_ENABLE_ADMIN=true
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=admin
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=admin
+      - ME_CONFIG_BASICAUTH_USERNAME=admin
+      - ME_CONFIG_BASICAUTH_PASSWORD=admin
+    restart: unless-stopped
+    ports:
+      - "8081:8081"

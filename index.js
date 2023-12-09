@@ -1,87 +1,29 @@
-const express = require('express')
-const fs = require('fs')
-const { request } = require('http')
-const app = express()
+// llamada y realizacion de conexion con base de datos utilizando mongoose
+require('./db')
+// Constante Users obteniendo models propio de mongoose para manejo de datos en mongodb 
+const Users = require('./models/users')
 
-app.use(express.json())
-app.use(express.urlencoded({extended: true}))
+// Las funciones asíncronas (async function) en JavaScript se utilizan para simplificar y gestionar mejor el código 
+// en situaciones donde se realizan operaciones asíncronas, como llamadas a APIs, lecturas/escrituras de archivos, 
+// o consultas a bases de datos. Estas funciones están diseñadas para trabajar de manera síncrona dentro del código,
+// incluso cuando realizan operaciones que toman un tiempo significativo 
+async function main () {
+    const users = new Users({
+        user: 'user2',
+        password: 'password1',
+        name: "Nobre Usuario 2",
+        mail: "user2@user.com"
+    });
+    // guardamos en una constanta con el tiempo de espera de ejecucion de users.save y luego  la consultamos con console.log
+    // mongo te brinda un valor extra "_v" cuando ya fue guardada en db, mejor entendimiento.
+    const usersSave = await users.save();
 
+    //como puedo manejarlo como una promesa podemos cambiar console.log por un return y hacer uso en la funcion por fuera con
+    // then y catch.
+    return usersSave // console.log(usersSave);
+}
 
-app.get('/', (request, response) => {
-    return response.send('Hello, World')
-})
-
-
-app.get('/todos', (request, response) => {
-    const showPending = request.query.showpending
-
-    fs.readFile('./store/todos.json', 'utf-8', (err, data) => {
-        if (err) {
-            return response.status(500).send('No anda nada amigo')
-        }
-
-        const todos = JSON.parse(data)
-        if (showPending !== "1"){
-            return response.json({todos: todos})
-        } else {
-            return response.json ({todos: todos.filter(t => {return t.complete === false})})
-        }
-        return response.json({todos: todos})
-    })
-})
-
-app.put('/todos/:id/complete', (request, response) => {
-    const id = request.params.id;
-
-    const findTodoById = (todos, id) => {
-        for (let i = 0; i < todos.length; i++) {
-            if (todos[i].id === parseInt(id)) {
-                return i;
-            }
-        }
-        return -1;
-    };
-    fs.readFile('./store/todos.json', 'utf-8', (err, data) => {
-        if (err) {
-            return response.status(500).send('Sorry, algo esta mal ameo');
-        }
-
-        let todos = JSON.parse(data);
-        const todoIndex = findTodoById(todos, id);
-        if (todoIndex === -1) {
-            return response.status(404).send('Sorry, algo se perdio por ahi ameo');
-        }
-        todos[todoIndex].complete = true;
-
-        fs.writeFile('./store/todos.json', JSON.stringify(todos), () => {
-            return response.json({ 'status': 'ok' })
-        })
-    })
-})
-
-app.post('/todo', (request, response) => {
-    if (!request.body.name) {
-        return response.status(400).send(' no se encuentra el nombre')
-    }
-
-    fs.readFile('./store/todos.json', 'utf-8', (err, data) => {
-        if (err) {
-            return response.status(500).send('fijate que te algo no anda')
-        }
-        const todos = JSON.parse(data)
-        const maxId = Math.max.apply(Math, todos.map(t => { return t.id }))
-        
-        todos.push({
-            id: maxId +1,
-            complete: false,
-            name: request.body.name
-        })
-        fs.writeFile('./store/todos.json', JSON.stringify(todos), () => {
-            return response.json({ 'status': 'ok' })
-        })       
-    })
-})
-
-app.listen(3000, () =>{
-    console.log('Application running on http://localhost:3000')
-})
+main()
+// esto se podria eliminar volviendo a console.log(usersSave); en la funcion main
+    .then(usersSave => console.log(usersSave)) 
+    .catch(err => console.log(err))
