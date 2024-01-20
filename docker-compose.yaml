@@ -26,16 +26,20 @@ services:
   #     - 27017:27017
   #   volumes:
   #     - ./configs/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+
   mongodb:
     container_name: mongo
     image: mongo
     environment:
       - MONGO_INITDB_ROOT_USERNAME=admin 
       - MONGO_INITDB_ROOT_PASSWORD=admin 
+      - MONGO_INITDB_DATABASE=js
     ports:
       - 27017:27017
     volumes:
       - .db:/data/db
+      - ./configs/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+
   mongo-express:
     image: mongo-express
     container_name: mexpress
