@@ -53,14 +53,14 @@ db.createUser(
       [ 
         {
           role:"readWrite",
-          db:"expressjs"
+          db:"js"
         }
       ]
   }
 );
 ```
 
-
+```json
 db.createUser(
   {
     user:"usuario",
@@ -74,3 +74,4 @@ db.createUser(
       ]
   }
 );
+```

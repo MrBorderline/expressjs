@@ -11,6 +11,7 @@ const DATABASE = process.env.DATABASE;
 const information = `mongodb://${HOST}:${PORT}/${DATABASE}`;
 
 const uri = `mongodb://${USER}:${PASSWORD}@${HOST}:${PORT}/${DATABASE}`;
+console.log(uri)
 mongoose.connect(uri)
     .catch(err => console.log(err));
 
