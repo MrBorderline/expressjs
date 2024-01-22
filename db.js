@@ -1,16 +1,16 @@
 const mongoose = require('mongoose')
 const db = mongoose.connection;
 
-const HOST = process.env.HOST;
-const PORT = process.env.PORT;
-const USER = process.env.USER;
-const PASSWORD = process.env.PASSWORD;
+const MONGO_HOST = process.env.MONGO_HOST;
+const MONGO_PORT = process.env.MONGO_PORT;
+const MONGO_USER = process.env.MONGO_USER;
+const MONGO_PASSWORD = process.env.MONGO_PASSWORD;
 const AUTHDB= process.env.AUTHDB;
-const DATABASE = process.env.DATABASE;
+const MONGO_DATABASE = process.env.MONGO_DATABASE;
 
-const information = `mongodb://${HOST}:${PORT}/${DATABASE}`;
+const information = `mongodb://${MONGO_HOST}:${MONGO_PORT}/${MONGO_DATABASE}`;
 
-const uri = `mongodb://${USER}:${PASSWORD}@${HOST}:${PORT}/${DATABASE}`;
+const uri = `mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}/${MONGO_DATABASE}`;
 console.log(uri)
 mongoose.connect(uri)
     .catch(err => console.log(err));

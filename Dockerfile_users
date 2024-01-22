@@ -3,7 +3,7 @@ WORKDIR /app
 COPY . .
 USER root
 RUN apk update ; apk add curl net-tools inetutils-telnet vim
-RUN npm install ; npm install mongoose
+RUN npm install ; npm install mongoose express
 RUN npm install -g pm2
 
 # encapsulamiento de usuario sin privilegios extendidos
